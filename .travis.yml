@@ -22,8 +22,5 @@ script:
         - coverage run --source=basketball_db setup.py test
         - pip install . -vvv
 
-after_sucess:
+after_success:
         - coveralls
-    
-
-
