@@ -3,6 +3,16 @@ package to query basketball-reference.com and save data.
 
 ## Installation
 
+### Requirements
+
+* `numpy`
+* `scipy`
+* `pandas`
+* `bs4`
+* `matplotlib` [will need soon]
+
+### Instructions
+
 1. Clone the repo
 2. cd to repo top level directory
 3. run `pip install .` or `python setup.py install`
