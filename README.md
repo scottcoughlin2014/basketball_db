@@ -1,7 +1,11 @@
 # basketball_db
 
 [![Build Status](https://travis-ci.org/pmeyers279/basketball_db.svg?branch=master)](https://travis-ci.org/pmeyers279/basketball_db)
+
 [![Coverage Status](https://coveralls.io/repos/github/pmeyers279/basketball_db/badge.svg)](https://coveralls.io/github/pmeyers279/basketball_db)
+
+[![Code Health](https://landscape.io/github/pmeyers279/basketball_db/master/landscape.svg?style=flat)](https://landscape.io/github/pmeyers279/basketball_db/master)
+
 
 package to query basketball-reference.com and save data.
 
