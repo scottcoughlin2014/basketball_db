@@ -1,6 +1,8 @@
 # basketball_db
 package to query basketball-reference.com and save data.
 
+**NOTE**: This package is still under very heavy development.
+
 ## Installation
 
 ### Requirements
@@ -16,11 +18,6 @@ package to query basketball-reference.com and save data.
 1. Clone the repo
 2. cd to repo top level directory
 3. run `pip install .` or `python setup.py install`
-
-## Run tests
-
-1. cd to repo top level
-2. For example: `python -m basketball_db.tests.create_db_test`
 
 ## Save all games for one team for 2015/2016 season
 
@@ -44,3 +41,9 @@ You can read this in with:
 >>> away_shot_chart = pd.read_hdf(fname,'away_shot_chart')
 >>> print away_shot_chart
 ```
+
+## Run tests
+
+1. cd to repo top level
+2. For example: `python -m basketball_db.tests.create_db_test`
+
