@@ -1,4 +1,6 @@
 # basketball_db
+
+[![Build Status](https://travis-ci.org/pmeyers279/basketball_db.svg?branch=master)](https://travis-ci.org/pmeyers279/basketball_db)_
 package to query basketball-reference.com and save data.
 
 **NOTE**: This package is still under very heavy development.
