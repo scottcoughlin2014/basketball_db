@@ -20,3 +20,5 @@ docs/*.inv
 *.dag*
 *.sub
 
+# notebook checkpoints
+.ipynb*/
