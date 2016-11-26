@@ -66,5 +66,6 @@ setup(name=PACKAGENAME,
       license=LICENSE,
       long_description=LONG_DESCRIPTION,
       zip_safe=False,
+      test_suite='basketball_db.tests',
       use_2to3=True
       )

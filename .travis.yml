@@ -22,4 +22,8 @@ script:
         - . .travis/run_tests.sh
         - pip install . -vvv
 
+after_sucess:
+        - coveralls
+    
+
 

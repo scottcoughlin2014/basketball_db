@@ -1,3 +1,3 @@
 #!/bin/bash
 
-python -m basketball_db.tests.create_db_test
+coverage run --source=basketball_db --omit="basketball_db/tests" setup.py test
