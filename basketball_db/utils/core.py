@@ -11,16 +11,58 @@ import numpy as np
 BASEURL = 'http://www.basketball-reference.com/'
 
 def _get_pbp_link(link):
+    """
+    get play-by-play link from box score link
+    Parameters
+    ----------
+    link : `str`
+        box score link
+
+    Returns
+    -------
+    pbp_link : `str`
+        play by play link
+    """
+    pass
     sp = link.split('/')
     newlink = sp[-2] + '/pbp/' + sp[-1]
     return newlink
 
 def _get_shot_chart_link(link):
+    """
+    get shot chart link from box score link
+    Parameters
+    ----------
+    link : `str`
+        box score link
+
+    Returns
+    -------
+    newlink : `str`
+        shot chart link
+    """
     sp = link.split('/')
     newlink = sp[-2] + '/shot-chart/' + sp[-1]
     return newlink
 
 def extract_box_score(soup_bs, team=None):
+    """
+    extract box score from game page
+
+    Parameters
+    ----------
+    soup_bs : :class:`bs4.BeautifulSoup`
+        beautiful soup class object. used to parse full box score
+        web page
+    team : `str`
+        3-letter team tag for one of the two teams
+        this box score web page is for
+
+    Returns
+    -------
+    box_score : :class:`pandas.DataFrame`
+        pandas dataframe table for this box score
+    """
     id_tag = 'box_' + team.lower() + '_basic'
     tab = soup_bs.find('table',{'id':id_tag})
     if len(tab)==0:
@@ -60,6 +102,24 @@ def extract_box_score(soup_bs, team=None):
     return box_score
 
 def extract_shot_chart(soup_sc, team=None):
+    """
+    get shot chart
+    Parameters
+    ----------
+    soup_sc : `bs4.BeautifulSoup`
+        Beautiful soup object for shot
+        chart webpage. Used to parse webpage
+    team : `str`
+        3-letter team id code for one of the two
+        teams on this shot chart page
+
+    Returns
+    -------
+    shot_chart : `pandas.DataFrame`
+        pandas data frame object
+        for shot chart for this game for
+        the specified team
+    """
     id_tag = 'shots-' + team.upper()
     court_width=50
     court_len=47
@@ -82,6 +142,9 @@ def extract_shot_chart(soup_sc, team=None):
     return shotFrame
 
 def _get_team(soup_bs,team='home'):
+    """
+    get team name from box score page
+    """
     score_div = soup_bs.find('div',{'class':'scorebox'})
     if team == 'home':
         t = score_div.findAll('strong')[1].a['href'].split('/')[2].lower()
@@ -92,6 +155,9 @@ def _get_team(soup_bs,team='home'):
     return t
 
 def _get_date(soup_bs):
+    """
+    get date of game from box score page
+    """
     content_div = soup_bs.find('div',{'id':'content'})
     month_day = content_div.find('h1').text.split(',')[-2]
     year = content_div.find('h1').text.split(',')[-1]
@@ -99,6 +165,9 @@ def _get_date(soup_bs):
     return date
 
 def path2date(path):
+    """
+    figure out path to file from date of game
+    """
     sp = path.split('/')
     yr = sp[1]
     mth = sp[2]
@@ -108,10 +177,17 @@ def path2date(path):
     return date
 
 def date2path(date, basedir='./'):
+    """
+    figure out date of game from file path
+    """
+
     path = date.strftime('%Y/%m/%d')
     return basedir + '/' + path + '/'
 
 def make_data_path(date, basedir='./'):
+    """
+    create path to file for a game on specified date
+    """
     path = date2path(date, basedir=basedir)
     try:
         os.makedirs(path)
@@ -119,20 +195,43 @@ def make_data_path(date, basedir='./'):
         pass
 
 def make_schedule_path(year, basedir='./'):
+    """
+    create path to where we want to save schedules
+    """
     try:
         os.makedirs(basedir+'/SCHEDULES/')
     except OSError:
         pass
 
 def get_schedule_name(team, year, basedir='./'):
+    """
+    return name of schedule file to save
+    """
     return ('%s/SCHEDULES/%s-%d-%d' % (basedir, team, year-1, year)).replace('//','/')
 
 def get_game_fname(date, home_team, away_team, basedir='./'):
+    """
+    return name of game file we want to save
+    """
     path = date2path(date, basedir=basedir)
     fstring = away_team.upper() + '-AT-' + home_team.upper() + '.hdf5'
     return (path + '/' + fstring).replace('//','/')
 
 def _get_schedule(soup):
+    """
+    extract schedule from team's schedule page
+
+    Parameters
+    ----------
+    soup : `bs4.BeautifulSoup`
+        beautiful soup object for team's schedule page.
+        Used to parse web page
+
+    Returns
+    -------
+    schedule : `pandas.DataFrame`
+        pandas dataframe object for schedule
+    """
     tab = soup.find('table',{'id':'games'})
     list_vals =pd.read_html('<table>' + str(tab.find('tbody'))+'</table>')
     headers = []
