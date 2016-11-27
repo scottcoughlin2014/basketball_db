@@ -38,10 +38,41 @@ def bball_court_half():
     ang_3= np.arange(extra,np.pi-extra,0.00001)
     three_pt_xs = 25+(23 + 9/12)*np.cos(ang_3)
     three_pt_ys = (4 + 9/12)+(23 + 9/12)*np.sin(ang_3)
-    print three_pt_ys
-    print three_pt_xs
     plt.plot(three_pt_xs, three_pt_ys,'k',linewidth=1)
     ax = plt.gca()
     ax.set_xlim(0,50)
     ax.set_ylim(0,47)
     return ax
+
+def bball_court_three(X,Y):
+    # 3-Point
+    extra =np.arcsin((14 - 4 - 9/12)/(23 + 9./12))
+    ang_3= np.arange(extra,np.pi-extra,0.00001)
+    three_pt_xs = 25+(23 + 9/12)*np.cos(ang_3)
+    three_pt_ys = (4 + 9/12)+(23 + 9/12)*np.sin(ang_3)
+
+    idx = np.argsort(three_pt_xs)
+    three_pt_xs = three_pt_xs[idx]
+    three_pt_ys = three_pt_ys[idx]
+
+    xs = X.flatten()
+    ys = Y.flatten()
+    zs = np.zeros(xs.shape)
+
+    ii = 0
+    for x,y in zip(xs,ys):
+        point = -1
+        if x < three_pt_xs[0]:
+            point = 3
+        elif x > three_pt_xs[-1]:
+            point = 3
+        else:
+            ythree = np.interp(x,three_pt_xs,three_pt_ys)
+            if y < ythree:
+                point = 2
+            else:          
+                point = 3
+        zs[ii] = point
+        ii = ii + 1
+    points = zs.reshape(X.shape)
+    return points
