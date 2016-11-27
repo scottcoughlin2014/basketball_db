@@ -22,3 +22,6 @@ docs/*.inv
 
 # notebook checkpoints
 .ipynb*/
+
+# version
+basketball_db/version.py
