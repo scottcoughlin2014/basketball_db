@@ -140,8 +140,10 @@ def extract_shot_chart(soup_sc, team=None):
         shot_dict['shot_time'].append(sp[0].split(',')[1][1:-10])
         # get shot coordinates. Image is 500 x 472 px,
         # court is 50 ft. x 47 ft, so just divide by 10.
-        shot_dict['shot_xs'].append(int(shot['style'].split(':')[-1][:-3])/10.)
-        shot_dict['shot_ys'].append(int(shot['style'].split(':')[1][:-7])/10.)
+        shot_dict['shot_xs'].append((int(shot['style'].split(':')[-1][:-3]) +\
+            5)*(50/500.))
+        shot_dict['shot_ys'].append((int(shot['style'].split(':')[1][:-7]) +
+            10)*(47/472.))
     shotFrame = pd.DataFrame(shot_dict)
     return shotFrame
 
