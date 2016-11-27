@@ -1,6 +1,5 @@
-
 import numpy as np
-
+from mpl_toolkits.axes_grid1 import make_axes_locatable
 import matplotlib
 matplotlib.use('agg')
 import matplotlib.pyplot as plt
@@ -54,9 +53,12 @@ H_no_perc[np.isnan(H_no_perc)] = 0.0
 print "Percentage of shots made: %.5f%%"%(np.nansum(H_yes)/np.nansum(H_total))
 
 # heatmap for the shot chart
-plt.figure(figsize=(5,4.7))
+plt.figure(figsize=(5.3,4.7))
 ax = bball_court_half()
-ax.pcolor(X,Y,H_yes_perc)
+img = ax.pcolor(X,Y,H_yes_perc, cmap='RdBu_r', vmin=0,vmax=1)
+divider = make_axes_locatable(ax)
+cax = divider.append_axes("right", size="5.6%", pad=0.05)
+plt.colorbar(img,label='Shot percentage',cax=cax)
 plt.savefig('hist2d')
 plt.close()
 
