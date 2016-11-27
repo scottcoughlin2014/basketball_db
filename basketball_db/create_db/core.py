@@ -83,7 +83,8 @@ def save_team_season(team, year, basedir='./', break_after_missing_game=True,
                 away_box_score = extract_box_score(soup_bs, team=away_team)
                 home_box_score.to_hdf(fname, 'home_box_score')
                 away_box_score.to_hdf(fname, 'away_box_score')
-            except AttributeError:
+            except AttributeError as e:
+                print e
                 print """It looks like the box score isn't available yet...\n
                 This is likely because the game is too recent"""
             # get shot charts
@@ -92,7 +93,8 @@ def save_team_season(team, year, basedir='./', break_after_missing_game=True,
                 away_shot_chart = extract_shot_chart(soup_sc, team=away_team)
                 home_shot_chart.to_hdf(fname, 'home_shot_chart')
                 away_shot_chart.to_hdf(fname, 'away_shot_chart')
-            except AttributeError:
+            except AttributeError as e:
+                print e
                 print """It looks like the shot charts may not be available for
                 this game yet...\nWe're just saving box scores right now"""
             # create path to save
