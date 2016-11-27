@@ -1,6 +1,7 @@
 import numpy as np
 from mpl_toolkits.axes_grid1 import make_axes_locatable
 import matplotlib
+from matplotlib.colors import LogNorm
 matplotlib.use('agg')
 import matplotlib.pyplot as plt
 from basketball_db import create_db, query_db
@@ -81,8 +82,19 @@ plt.colorbar(img,label='Shot percentage',cax=cax)
 plt.savefig('hist2d')
 plt.close()
 
-plt.figure(figsize=(5,4.7))
+norm_arr = (H_yes_perc*points).reshape((points.size,1)).squeeze()
+norm = np.mean(norm_arr[norm_arr>0])
+std = np.std(norm_arr[norm_arr>0])
+print norm
+print std
+
+# heat map based on points
+plt.figure(figsize=(5.3,4.7))
 ax = bball_court_half()
-ax.pcolor(X,Y,H_yes_perc*points)
+img = ax.pcolor(X,Y,H_yes_perc*points, cmap='Spectral_r', vmin=norm-0.5,
+        vmax=norm+0.5)
+divider = make_axes_locatable(ax)
+cax = divider.append_axes("right", size="5.6%", pad=0.05)
+plt.colorbar(img,label='Expected Points',cax=cax)
 plt.savefig('points')
 plt.close()
