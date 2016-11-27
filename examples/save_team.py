@@ -1,3 +1,6 @@
+
+import numpy as np
+
 import matplotlib
 matplotlib.use('agg')
 import matplotlib.pyplot as plt
@@ -35,3 +38,25 @@ ax.scatter(50- shots['shot_xs'][~shots['result']],
     shots['shot_ys'][~shots['result']],c='r' )
 plt.savefig('test')
 plt.close()
+
+xedges = np.arange(50)
+yedges = np.arange(50)
+[X,Y] = np.meshgrid(xedges,yedges)
+H_yes, xedges1, yedges1 = np.histogram2d(shots['shot_ys'][shots['result']],50-shots['shot_xs'][shots['result']], bins=(xedges, yedges))
+H_no, xedges2, yedges2 = np.histogram2d(shots['shot_ys'][~shots['result']],50-shots['shot_xs'][~shots['result']], bins=(xedges, yedges))
+H_total = H_yes + H_no
+H_yes_perc = H_yes/H_total
+H_no_perc = H_no/H_total
+
+H_yes_perc[np.isnan(H_yes_perc)] = 0.0
+H_no_perc[np.isnan(H_no_perc)] = 0.0
+
+print "Percentage of shots made: %.5f%%"%(np.nansum(H_yes)/np.nansum(H_total))
+
+# heatmap for the shot chart
+plt.figure(figsize=(5,4.7))
+ax = bball_court_half()
+ax.pcolor(X,Y,H_yes_perc)
+plt.savefig('hist2d')
+plt.close()
+
