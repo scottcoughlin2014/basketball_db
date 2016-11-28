@@ -31,13 +31,14 @@ package to query basketball-reference.com and save data.
 
 ```
 >>> from basketball_db import create_db
->>> create_db.save_team_season('MIN','2016',basedir='./')
+>>> create_db.save_team_season('MIN',2016,basedir='./')
 ```
 
 This saves games in
 
 `%(basedir)/%(year)/%(month)/%(day)/%(TEAM1)-AT-%(TEAM2).hdf5`
 
+Please run this before trying the examples. If you run this command in the examples folder it will give you the data necessary to run the example.
 ## Load data
 
 It saves pandas dataframes for `home_box_score` and `away_box_score`, `home_shot_chart`, `away_shot_cart`
@@ -49,6 +50,10 @@ You can read this in with:
 >>> away_shot_chart = pd.read_hdf(fname,'away_shot_chart')
 >>> print away_shot_chart
 ```
+
+## Examples
+
+`python save_team.py --team MIN --YMDStart 20151101 --YMDEnd 20151201 --inifile bball.ini`
 
 ## Run tests
 
