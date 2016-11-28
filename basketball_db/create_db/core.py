@@ -25,12 +25,13 @@ def save_team_season(team, year, basedir='./', break_after_missing_game=True,
     team : `str`
         Three letter team identifier
     year : `int`
-        End year of season you want to save
+        End year of season you want to save. All four digits required.
 
     Returns
     -------
     none :
     """
+    year = int(year)
     # get team's season page
     soup =\
         BeautifulSoup(requests.get('http://www.basketball-reference.com/teams/%s/%d_games.html'\
