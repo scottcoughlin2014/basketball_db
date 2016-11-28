@@ -1,22 +1,33 @@
+from mpl_toolkits.axes_grid1 import make_axes_locatable
+import matplotlib
+matplotlib.use('agg')
+from matplotlib.colors import LogNorm
+import matplotlib.pyplot as plt
+
 from basketball_db import create_db, query_db
 from basketball_db import utils
 from court import bball_court_half, bball_court_three
 
 import numpy as np
+import argparse
 import pandas as pd
 
-from mpl_toolkits.axes_grid1 import make_axes_locatable
-import matplotlib
-from matplotlib.colors import LogNorm
-matplotlib.use('agg')
-import matplotlib.pyplot as plt
+def parse_commandline():
+    """
+    Parse the options given on the command-line.
+    """
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--team", help="What team do you want to make plots for. Did you query all the appropriate data for this team before running this?                     [ATL,BOS,BRK,CHI,CHO,CLE,DAL,DEN,DET,GSW,HOU,IND,LAC,LAL,MEM,MIA,MIL,MIN,NOP,NYK,OKC,ORL,PHI,PHO,POR,SAC,SAS,TOR,UTA,WAS]")
+    parser.add_argument("--YMDStart", help="[Format: 20151028] What date would you like to start aggregating data for.")
+    parser.add_argument("--YMDEnd", help="[Format: 20160413] What date would you like to end aggregating data for.")
 
+    args = parser.parse_args()
+
+    return args
+
+args = parse_commandline()
 # need 3-letter code for team...Will add a list of these
-TEAM = 'MIN'
-# Second year in the season...i.e. 2016 for 2015/2016 season
-YEAR = 2016
-# which games from that season do you want to save? (optional)
-GAMES = [1]
+TEAM = args.team
 # run the code
 #create_db.save_team_season(TEAM, YEAR, games=GAMES)
 #create_db.save_team_season(TEAM, YEAR)
@@ -28,8 +39,8 @@ GAMES = [1]
 # load the data (need to add a function for this...but it will look like this)a
 filename = './2015/10/28/MIN-AT-LAL.hdf5'
 
-DATE1 = '20151028'
-DATE2 = '20160413'
+DATE1 = args.YMDStart
+DATE2 = args.YMDEnd
 files = query_db.query_db(TEAM, date_start=DATE1, date_end=DATE2)
 
 shots = []
