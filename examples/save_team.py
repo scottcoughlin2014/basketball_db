@@ -38,8 +38,12 @@ figSizeShot = json.loads(cp.get('plotsShot','figSize'))
 figNameShot = cp.get('plotsShot','figName')
 figSizeHeatShot = json.loads(cp.get('plotsHeatShot','figSize'))
 figNameHeatShot = cp.get('plotsHeatShot','figName')
+figCMapHeatShot = cp.get('plotsHeatShot','figCMap')
 figSizeHeatPoint = json.loads(cp.get('plotsHeatPoint','figSize'))
 figNameHeatPoint = cp.get('plotsHeatPoint','figName')
+figCMapHeatPoint = cp.get('plotsHeatPoint','figCMap')
+win = cp.getint('parameters','win')
+lose = cp.getint('parameters','lose')
 # run the code
 #create_db.save_team_season(TEAM, YEAR, games=GAMES)
 #create_db.save_team_season(TEAM, YEAR)
@@ -64,12 +68,43 @@ for ii,filename in enumerate(files):
         isHome = False
     if isHome:
         shot = pd.read_hdf(filename,'home_shot_chart')
+        if win:
+            tmp1 =pd.read_hdf(filename,'home_box_score')
+            tmp2 =pd.read_hdf(filename,'away_box_score')
+            if tmp1.PTS.iloc[-1] < tmp2.PTS.iloc[-1]:
+                continue
+        if lose:
+            tmp1 =pd.read_hdf(filename,'home_box_score')
+            tmp2 =pd.read_hdf(filename,'away_box_score')
+            if tmp1.PTS.iloc[-1] > tmp2.PTS.iloc[-1]:
+                continue
     else:
         shot = pd.read_hdf(filename,'away_shot_chart')
+        if win:
+            tmp1 =pd.read_hdf(filename,'home_box_score')
+            tmp2 =pd.read_hdf(filename,'away_box_score')
+            if tmp1.PTS.iloc[-1] > tmp2.PTS.iloc[-1]:
+                continue
+        if lose:
+            tmp1 =pd.read_hdf(filename,'home_box_score')
+            tmp2 =pd.read_hdf(filename,'away_box_score')
+            if tmp1.PTS.iloc[-1] < tmp2.PTS.iloc[-1]:
+                continue
+
     shots.append(shot)
 shots = pd.concat(shots)
 
 # plot the shot chart
+if win:
+    figNameShot = figNameShot + '_win'
+    figNameHeatShot = figNameHeatShot + '_win'
+    figNameHeatPoint = figNameHeatPoint + '_win'
+
+if lose:
+    figNameShot = figNameShot + '_lose'
+    figNameHeatShot = figNameHeatShot + '_lose'
+    figNameHeatPoint = figNameHeatPoint + '_lose'
+
 plt.figure(figsize=figSizeShot)
 ax = bball_court_half()
 ax.scatter(50- shots['shot_xs'][shots['result']],
@@ -100,7 +135,7 @@ print "Percentage of shots made: %.5f%%"%(np.nansum(H_yes)/np.nansum(H_total))
 # heatmap for the shot chart
 plt.figure(figsize=figSizeHeatShot)
 ax = bball_court_half()
-img = ax.pcolor(X,Y,H_yes_perc, cmap='RdBu_r', vmin=0,vmax=1)
+img = ax.pcolor(X,Y,H_yes_perc, cmap=figCMapHeatShot, vmin=0,vmax=1)
 divider = make_axes_locatable(ax)
 cax = divider.append_axes("right", size="5.6%", pad=0.05)
 plt.colorbar(img,label='Shot percentage',cax=cax)
@@ -116,7 +151,7 @@ print std
 # heat map based on points
 plt.figure(figsize=figSizeHeatPoint)
 ax = bball_court_half()
-img = ax.pcolor(X,Y,H_yes_perc*points, cmap='Spectral_r', vmin=norm-0.5,
+img = ax.pcolor(X,Y,H_yes_perc*points, cmap=figCMapHeatPoint, vmin=norm-0.5,
         vmax=norm+0.5)
 divider = make_axes_locatable(ax)
 cax = divider.append_axes("right", size="5.6%", pad=0.05)
