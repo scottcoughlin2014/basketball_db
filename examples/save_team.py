@@ -6,7 +6,7 @@ import matplotlib.pyplot as plt
 
 from basketball_db import create_db, query_db
 from basketball_db import utils
-from court import bball_court_half, bball_court_three
+from court import bball_court_half, bball_court_three, bball_court_blocks
 
 import argparse
 import ConfigParser
@@ -130,7 +130,7 @@ H_no_perc = H_no/H_total
 H_yes_perc[np.isnan(H_yes_perc)] = 0.0
 H_no_perc[np.isnan(H_no_perc)] = 0.0
 
-print "Percentage of shots made: %.5f%%"%(np.nansum(H_yes)/np.nansum(H_total))
+print "Percentage of shots made: %.1f%%"%(100*np.nansum(H_yes)/np.nansum(H_total))
 
 # heatmap for the shot chart
 plt.figure(figsize=figSizeHeatShot)
@@ -145,8 +145,8 @@ plt.close()
 norm_arr = (H_yes_perc*points).reshape((points.size,1)).squeeze()
 norm = np.mean(norm_arr[norm_arr>0])
 std = np.std(norm_arr[norm_arr>0])
-print norm
-print std
+
+exp_points = H_yes_perc*points
 
 # heat map based on points
 plt.figure(figsize=figSizeHeatPoint)
@@ -158,3 +158,8 @@ cax = divider.append_axes("right", size="5.6%", pad=0.05)
 plt.colorbar(img,label='Expected Points',cax=cax)
 plt.savefig(figNameHeatPoint)
 plt.close()
+
+shotdists = bball_court_blocks(Xpoints,Ypoints)
+for key in shotdists:
+    expected_points = np.nansum(points*shotdists[key]*H_yes)/np.nansum(points*shotdists[key]*H_total)
+    print "Type: %s, Expected points: %.2f"%(key,expected_points)
