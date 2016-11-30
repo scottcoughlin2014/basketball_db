@@ -3,10 +3,9 @@ import matplotlib
 matplotlib.use('agg')
 from matplotlib.colors import LogNorm
 import matplotlib.pyplot as plt
-
-from basketball_db import create_db, query_db
-from basketball_db import utils
-from court import bball_court_half, bball_court_three, bball_court_blocks
+from basketball_db import db_utilities
+from court import (bball_court_half, bball_court_three, bball_court_blocks,
+    bball_shot_points)
 
 import argparse
 import ConfigParser
@@ -19,10 +18,13 @@ def parse_commandline():
     Parse the options given on the command-line.
     """
     parser = argparse.ArgumentParser()
-    parser.add_argument("--team", help="What team do you want to make plots for. Did you query all the appropriate data for this team before running this?                     [ATL,BOS,BRK,CHI,CHO,CLE,DAL,DEN,DET,GSW,HOU,IND,LAC,LAL,MEM,MIA,MIL,MIN,NOP,NYK,OKC,ORL,PHI,PHO,POR,SAC,SAS,TOR,UTA,WAS]")
+    parser.add_argument("--team", help="What team do you want to make plots for. Did you query all the appropriate data for this team before running this? [ATL,BOS,BRK,CHI,CHO,CLE,DAL,DEN,DET,GSW,HOU,IND,LAC,LAL,MEM,MIA,MIL,MIN,NOP,NYK,OKC,ORL,PHI,PHO,POR,SAC,SAS,TOR,UTA,WAS]")
     parser.add_argument("--YMDStart", help="[Format: 20151028] What date would you like to start aggregating data for.")
     parser.add_argument("--YMDEnd", help="[Format: 20160413] What date would you like to end aggregating data for.")
     parser.add_argument("--inifile", help="Name of ini file to deal with nitty gritty stuff that is annoying to specify at the command line")
+    parser.add_argument("--BaseDir", "-b",
+        help="Base directory for querying database", default='./',
+        dest="basedir")
 
     args = parser.parse_args()
 
@@ -57,7 +59,7 @@ filename = './2015/10/28/MIN-AT-LAL.hdf5'
 
 DATE1 = args.YMDStart
 DATE2 = args.YMDEnd
-files = query_db.query_db(TEAM, date_start=DATE1, date_end=DATE2)
+files = db_utilities.query_db(TEAM, date_start=DATE1, date_end=DATE2, basedir=args.basedir)
 
 shots = []
 for ii,filename in enumerate(files):
@@ -149,7 +151,7 @@ std = np.std(norm_arr[norm_arr>0])
 exp_points = H_yes_perc*points
 
 # heat map based on points
-plt.figure(figsize=figSizeHeatPoint)
+plt.figure(figsize=(5.3,4.7))
 ax = bball_court_half()
 img = ax.pcolor(X,Y,H_yes_perc*points, cmap=figCMapHeatPoint, vmin=norm-0.5,
         vmax=norm+0.5)
@@ -158,6 +160,36 @@ cax = divider.append_axes("right", size="5.6%", pad=0.05)
 plt.colorbar(img,label='Expected Points',cax=cax)
 plt.savefig(figNameHeatPoint)
 plt.close()
+
+ticks = np.asarray([1.5,1.6,1.7,1.8,1.9,2.0,2.1,2.2])
+logticks = np.log10(ticks)
+
+# hexbin
+points_achieved = bball_shot_points(shots['shot_xs'], shots['shot_ys'])
+points_achieved[np.where(~shots['result'])] = 0
+# set points to zero if shot missed
+plt.figure(figsize=figSizeHeatShot)
+ax = bball_court_half()
+plt.hexbin(50-shots['shot_xs'],shots['shot_ys'],
+        C=points_achieved, reduce_C_function=np.mean,
+        gridsize=20, bins='log', cmap='Spectral_r', vmin=0.1, vmax=0.40)
+#cax = divider.append_axes("right", size="5.6%", pad=0.05)
+#cbar = plt.colorbar(label='Expected Points')
+#cbar.ax.set_yticklabels(ticks)
+plt.savefig('hexbin_points')
+plt.close()
+
+# hexbin shot_locations
+plt.figure(figsize=figSizeHeatShot)
+ax = bball_court_half()
+plt.hexbin(50-shots['shot_xs'],shots['shot_ys'],
+           gridsize=10, cmap='viridis', bins='log')
+cax = divider.append_axes("right", size=0.295, pad=0.05)
+cbar = plt.colorbar(label='log10(Number of shots)', ax=cax)
+#cbar.ax.set_yticklabels(ticks)
+plt.savefig('hexbin_shot_locations')
+plt.close()
+
 
 shotdists = bball_court_blocks(Xpoints,Ypoints)
 for key in shotdists:
