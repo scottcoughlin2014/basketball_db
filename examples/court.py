@@ -123,3 +123,83 @@ def bball_court_blocks(X,Y):
         data[type] = data[type].reshape(X.shape)
 
     return data
+
+def bball_shot_points(xs,ys):
+    # 3-Point
+    extra =np.arcsin((14 - 4 - 9/12)/(23 + 9./12))
+    ang_3= np.arange(extra,np.pi-extra,0.00001)
+    three_pt_xs = 25+(23 + 9/12)*np.cos(ang_3)
+    three_pt_ys = (4 + 9/12)+(23 + 9/12)*np.sin(ang_3)
+
+    idx = np.argsort(three_pt_xs)
+    three_pt_xs = three_pt_xs[idx]
+    three_pt_ys = three_pt_ys[idx]
+
+#    xs = X.flatten()
+#    ys = Y.flatten()
+    zs = np.zeros(xs.shape)
+
+    ii = 0
+    for x,y in zip(xs,ys):
+        point = -1
+        if x < three_pt_xs[0]:
+            point = 3
+        elif x > three_pt_xs[-1]:
+            point = 3
+        else:
+            ythree = np.interp(x,three_pt_xs,three_pt_ys)
+            if y < ythree:
+                point = 2
+            else:          
+                point = 3
+        zs[ii] = point
+        ii = ii + 1
+    return zs
+
+def bball_court_blocks(X,Y):
+    types = ["0to3","3to16","16to3pt","3pt"] 
+
+    # Hoop
+    hoop=[25.0,4.0 + 9.0/12]
+
+    # 3-Point
+    extra =np.arcsin((14 - 4 - 9/12)/(23 + 9./12))
+    ang_3= np.arange(extra,np.pi-extra,0.00001)
+    three_pt_xs = 25+(23 + 9/12)*np.cos(ang_3)
+    three_pt_ys = (4 + 9/12)+(23 + 9/12)*np.sin(ang_3)
+
+    idx = np.argsort(three_pt_xs)
+    three_pt_xs = three_pt_xs[idx]
+    three_pt_ys = three_pt_ys[idx]
+
+    xs = X.flatten()
+    ys = Y.flatten()
+
+    data = {}
+    for type in types:
+        data[type] = np.zeros(xs.shape)
+
+    ii = 0
+    for x,y in zip(xs,ys):
+        if x < three_pt_xs[0]:
+            data["3pt"][ii] = 1
+        elif x > three_pt_xs[-1]:
+            data["3pt"][ii] = 1
+        else:
+            ythree = np.interp(x,three_pt_xs,three_pt_ys)
+            if y < ythree:
+                dist = np.sqrt((x-hoop[0])**2 + (y-hoop[1])**2)
+                if dist < 3:
+                    data["0to3"][ii] = 1
+                elif (dist >=3) and (dist < 16):
+                    data["3to16"][ii] = 1
+                elif dist >= 16:
+                    data["16to3pt"][ii] = 1
+            else:          
+                data["3pt"][ii] = 1
+        ii = ii + 1
+
+    for type in types:
+        data[type] = data[type].reshape(X.shape)
+
+    return data
