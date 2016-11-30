@@ -4,6 +4,7 @@ import unittest
 import numpy.testing as npt
 from ..db_utilities import save_team_season, query_db
 from ..shotchart import ShotChart
+from ..plotter.shotchart import ShotChartScatter
 import os
 import shutil
 import pandas as pd

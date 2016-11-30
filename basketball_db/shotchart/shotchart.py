@@ -10,7 +10,7 @@ class ShotChart(DataFrame):
     """
     Shot Chart object
     """
-    def __init__(self, df_data, team_name=None,date=none):
+    def __init__(self, df_data, team_name=None,date=None):
         """shot chart object."""
         super(ShotChart, self).__init__(df_data)
         self.team_name = team_name
@@ -51,6 +51,7 @@ class ShotChart(DataFrame):
         for ii in (4,3,2):
             path += '/' + filename.split('/')[-ii]+'/'
         path = path.replace('//','/')
+        date=path2date(path)
         home_sc = ShotChart(pd.read_hdf(filename,'home_shot_chart'), team_name=ht)
         away_sc = ShotChart(pd.read_hdf(filename,'away_shot_chart'),
                 team_name=at, date=date)
