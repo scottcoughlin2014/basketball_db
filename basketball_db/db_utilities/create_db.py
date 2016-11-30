@@ -6,7 +6,7 @@ from datetime import datetime
 from collections import OrderedDict
 import time
 import numpy as np
-from ..utils.core import (extract_box_score, extract_shot_chart,
+from .utils import (extract_box_score, extract_shot_chart,
     _get_shot_chart_link, _get_team, _get_date, make_data_path,
     make_schedule_path, date2path, path2date, get_schedule_name,
     get_game_fname, _get_schedule)

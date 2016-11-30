@@ -1,7 +1,6 @@
 import unittest
 import numpy.testing as npt
-from ..create_db.core import save_team_season
-from ..query_db.core import query_db
+from ..db_utilities import save_team_season, query_db
 import os
 import shutil
 

@@ -178,8 +178,9 @@ def path2date(path):
     yr = sp[1]
     mth = sp[2]
     day = sp[3]
-    strdate = mth,day,yr
-    date = datetime.strptime(strdate, '%m %d %Y')
+    strdate = mth+day+yr
+    print strdate
+    date = datetime.strptime(strdate, '%m%d%Y')
     return date
 
 def date2path(date, basedir='./'):
